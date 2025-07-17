@@ -1,9 +1,9 @@
-﻿
 using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions;
 using WPFSerialDebug.ViewModels;
 using WPFSerialDebug.Views;
+using System.Windows.Input;
 
 namespace WPFSerialDebug
 {
@@ -19,6 +19,23 @@ namespace WPFSerialDebug
             var pageProvider = App.Current.Services.GetRequiredService<INavigationViewPageProvider>();
             NavigationControl.SetPageProviderService(pageProvider);
             Loaded += (_, _) => NavigationControl.Navigate(typeof(ModbusDashboardView));
+            this.MouseLeftButtonDown += MainWindow_MouseLeftButtonDown;
+        }
+
+        private void MainWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // 只有在点击空白区域时才允许拖拽
+            if (e.Source == this || e.Source == NavigationControl)
+            {
+                try
+                {
+                    this.DragMove();
+                }
+                catch (InvalidOperationException)
+                {
+                    // 忽略拖拽时可能出现的异常
+                }
+            }
         }
 
         protected override void OnInitialized(EventArgs e)

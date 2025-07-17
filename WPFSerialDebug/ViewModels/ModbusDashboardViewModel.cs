@@ -9,7 +9,7 @@ using WPFSerialDebug.Unit;
 
 namespace WPFSerialDebug.ViewModels
 {
-	public partial class ModbusDashboardViewModel : ObservableObject
+	public partial class ModbusDashboardViewModel : ObservableObject, IDisposable
 	{
 		
 
@@ -43,11 +43,7 @@ namespace WPFSerialDebug.ViewModels
 
 		[ObservableProperty] private ObservableCollection<string> portNames;
 		[ObservableProperty] private int readCount = 10;
-
-		[ObservableProperty] private ushort registerAddress;
-
 		[ObservableProperty] private ObservableCollection<string> returnList = new();
-
 		[ObservableProperty] private ModbusConnectionType selectedConnectionType = ModbusConnectionType.TCP;
 
 		[ObservableProperty] private ModbusFunctionCode selectedFunctionCode;
@@ -140,7 +136,7 @@ namespace WPFSerialDebug.ViewModels
 		[RelayCommand]
 		public void SwicthConnectToModbusDevice()
 		{
-			if (_modbusClient?.IsConnected==false)
+			if (_modbusClient?.IsConnected==true)
 			{
 				Disconnect();
 				ConnectContent="连接";
@@ -192,37 +188,6 @@ namespace WPFSerialDebug.ViewModels
 			return default(T);
 		}
 
-		public void ReadModbusData(string deviceAddress)
-		{
-			if (_modbusClient == null || !_modbusClient.IsConnected)
-			{
-				Console.WriteLine("客户端未连接。");
-				return;
-			}
-
-			try
-			{
-				byte unitIdentifier = 1;
-				ushort startAddress = 0;
-				ushort quantity = 10;
-				Span<short> registers =
-					_modbusClient.ReadHoldingRegisters<short>(unitIdentifier, startAddress, quantity);
-				Console.WriteLine("成功读取寄存器数据:");
-				for (int i = 0; i < registers.Length; i++)
-				{
-					Console.WriteLine($"寄存器 {startAddress + i}: {registers[i]}");
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"读取数据时出错: {ex.Message}");
-			}
-		}
-
-		public void ReconnectModbusDevice(string deviceAddress)
-		{
-		}
-
 		/// <summary>
 		/// 发送消息
 		/// </summary>
@@ -243,8 +208,33 @@ namespace WPFSerialDebug.ViewModels
 			return SelectedByteFormateType switch
 			{
 				ByteFormateType.String => BitConverter.ToString(data).Replace("-", " "),
-				ByteFormateType.HEX => string.Join(" ", data.Select(b => b.ToString("X2"))),
+				ByteFormateType.HEX => string.Join(" ", data.Select(b => $"0x{b:X2}")),
 				ByteFormateType.BINARY => string.Join(" ", data.Select(b => b.ToString("B8"))),
+				_ => throw new ArgumentOutOfRangeException()
+			};
+		}
+
+		private string FormatCoilData(Memory<byte> data, int coilCount)
+		{
+			var coilValues = new List<bool>();
+			var span = data.Span;
+			
+			// 将字节数据转换为线圈状态（布尔值）
+			for (int byteIndex = 0; byteIndex < span.Length; byteIndex++)
+			{
+				byte currentByte = span[byteIndex];
+				for (int bitIndex = 0; bitIndex < 8 && (byteIndex * 8 + bitIndex) < coilCount; bitIndex++)
+				{
+					bool coilState = (currentByte & (1 << bitIndex)) != 0;
+					coilValues.Add(coilState);
+				}
+			}
+
+			return SelectedByteFormateType switch
+			{
+				ByteFormateType.String => string.Join(" ", coilValues.Select((value, index) => $"[{index}]:{(value ? "ON" : "OFF")}")),
+				ByteFormateType.HEX => string.Join(" ", coilValues.Select(value => value ? "0x01" : "0x00")),
+				ByteFormateType.BINARY => string.Join(" ", coilValues.Select(value => value ? "1" : "0")),
 				_ => throw new ArgumentOutOfRangeException()
 			};
 		}
@@ -272,14 +262,14 @@ namespace WPFSerialDebug.ViewModels
 					await ExecuteModbusOperationAsync(
 						$"读取线圈: 单元 {UnitIdentifier}, 起始地址 {StartingAddress}, 数量 {ReadCount}",
 						() => _modbusClient.ReadCoilsAsync(UnitIdentifier, StartingAddress, ReadCount),
-						data => $" {FormatReceivedData(data.ToArray())}");
+						data => $" {FormatCoilData(data, ReadCount)}");
 					break;
 				// 读取 离散输入
 				case ModbusFunctionCode.ReadDiscreteInputs: // FC02
 					await ExecuteModbusOperationAsync(
 						$"读取离散输入: 单元 {UnitIdentifier}, 起始地址 {StartingAddress}, 数量 {ReadCount}",
 						() => _modbusClient.ReadDiscreteInputsAsync(UnitIdentifier, StartingAddress, ReadCount),
-						data => $" {FormatReceivedData(data.ToArray())}");
+						data => $" {FormatCoilData(data, ReadCount)}");
 					break;
 
 				// case ModbusFunctionCode.ReadExceptionStatus:
@@ -337,6 +327,13 @@ namespace WPFSerialDebug.ViewModels
 				{
 					PortNames.Add(port);
 				}
+			}
+		}
+		public void Dispose()
+		{
+			if (_modbusClient is IDisposable disposableClient)
+			{
+				 disposableClient?.Dispose();
 			}
 		}
 	}
