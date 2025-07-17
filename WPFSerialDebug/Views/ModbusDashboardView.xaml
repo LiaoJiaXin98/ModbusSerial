@@ -1,0 +1,186 @@
+<UserControl
+    x:Class="WPFSerialDebug.Views.ModbusDashboardView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:WPFSerialDebug.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:WPFSerialDebug.Model"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:unit="clr-namespace:WPFSerialDebug.Unit"
+    xmlns:viewModels="clr-namespace:WPFSerialDebug.ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewModels:ModbusDashboardViewModel,
+                                     IsDesignTimeCreatable=True}"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <unit:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
+
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="Margin" Value="8,0,8,0" />
+            </Style>
+            <Style BasedOn="{StaticResource {x:Type ui:Button}}" TargetType="{x:Type ui:Button}">
+                <Setter Property="Margin" Value="8,0,8,0" />
+                <Setter Property="Width" Value="80" />
+            </Style>
+            <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+                <Setter Property="Width" Value="120" />
+            </Style>
+
+        </Grid.Resources>
+
+        <ui:Card Grid.Row="0" Grid.Column="0">
+            <WrapPanel>
+                <!--  通讯方式选择  -->
+                <TextBlock VerticalAlignment="Center" Text="通讯方式:" />
+                <ComboBox
+                    Width="120"
+                    ItemsSource="{Binding ModbusConnectionTypes}"
+                    SelectedItem="{Binding SelectedConnectionType, Mode=TwoWay}" />
+            </WrapPanel>
+        </ui:Card>
+
+
+        <ui:Card Grid.Row="1" Grid.Column="0">
+            <StackPanel Orientation="Horizontal">
+                <WrapPanel Visibility="{Binding SelectedConnectionType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=TCP}">
+                    <TextBlock VerticalAlignment="Center" Text="IP地址:" />
+                    <TextBox Width="120" Text="{Binding TcpConfig.IpAddress}" />
+                    <TextBlock VerticalAlignment="Center" Text="端口:" />
+                    <TextBox Width="120" Text="{Binding TcpConfig.Port}" />
+                </WrapPanel>
+                <WrapPanel Visibility="{Binding SelectedConnectionType, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=RTU}">
+                    <TextBlock VerticalAlignment="Center" Text="COM端口 :" />
+                    <ComboBox
+                        Width="120"
+                        ItemsSource="{Binding PortNames}"
+                        SelectedItem="{Binding RtuConfig.ComPort}" />
+                    <TextBlock VerticalAlignment="Center" Text="波特率:" />
+                    <ComboBox
+                        Width="120"
+                        ItemsSource="{Binding BaudRateList}"
+                        SelectedItem="{Binding RtuConfig.BaudRate}" />
+                    <TextBlock
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Text="校验位" />
+                    <ComboBox
+                        Grid.Column="1"
+                        ItemsSource="{Binding Parities, Mode=OneWay}"
+                        SelectedIndex="0" />
+                </WrapPanel>
+                <ui:Button
+                    Appearance="Primary"
+                    Command="{Binding SwicthConnectToModbusDeviceCommand}"
+                    Content="{Binding ConnectContent}" />
+            </StackPanel>
+        </ui:Card>
+        <ui:Card Grid.Row="2" Grid.Column="0">
+            <StackPanel>
+                <WrapPanel>
+                    <!--  功能码选择  -->
+                    <TextBlock VerticalAlignment="Center" Text="功能码:" />
+
+                    <ComboBox
+                        DisplayMemberPath="Value"
+                        ItemsSource="{Binding FunctionCodeDescriptions}"
+                        SelectedValue="{Binding SelectedFunctionCode}"
+                        SelectedValuePath="Key" />
+                    <!--  起始地址  -->
+                    <TextBlock VerticalAlignment="Center" Text="起始地址:" />
+                    <TextBox Width="80" Text="{Binding StartingAddress}" />
+                    <TextBlock VerticalAlignment="Center" Text="数量:" />
+                    <TextBox
+                        Width="80"
+                        VerticalAlignment="Center"
+                        Text="{Binding ReadCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox IsChecked="{Binding IsTimerSend, Mode=TwoWay}">定时发送</CheckBox>
+                    <ComboBox
+                        DisplayMemberPath="."
+                        IsEnabled="{Binding IsTimerSend, Mode=OneWay}"
+                        ItemsSource="{Binding Timers}"
+                        SelectedItem="{Binding TimersSpan}" />
+                    <!--  格式化  -->
+                    <TextBlock VerticalAlignment="Center" Text="格式化:" />
+                    <ComboBox
+                        DisplayMemberPath="."
+                        ItemsSource="{Binding ByteFormateTypes}"
+                        SelectedItem="{Binding SelectedByteFormateType, Mode=TwoWay}" />
+                </WrapPanel>
+                <StackPanel Margin="0,16,0,0" HorizontalAlignment="Center">
+                    <ui:Button
+                        Width="180"
+                        Appearance="Primary"
+                        Command="{Binding SendToModbusCommand}">
+                        发送
+                    </ui:Button>
+                </StackPanel>
+            </StackPanel>
+        </ui:Card>
+        <Grid Grid.Row="3" MinHeight="300">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ui:Card
+                Grid.Column="0"
+                Margin="20"
+                Padding="20">
+                <StackPanel>
+                    <TextBlock FontWeight="Bold" Text="数据发送列表" />
+                    <ScrollViewer Height="300">
+                        <ItemsControl ItemsSource="{Binding SendList}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ui:Card Margin="0,8,0,0" Padding="10">
+                                        <TextBlock
+                                            FontSize="14"
+                                            Text="{Binding}"
+                                            TextWrapping="Wrap" />
+                                    </ui:Card>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </ui:Card>
+            <ui:Card
+                Grid.Column="1"
+                Margin="20"
+                Padding="20">
+                <StackPanel>
+                    <TextBlock FontWeight="Bold" Text="数据返回列表" />
+                    <ScrollViewer Height="300">
+                        <ItemsControl ItemsSource="{Binding ReturnList}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ui:Card Margin="0,8,0,0" Padding="10">
+                                        <TextBlock
+                                            FontSize="14"
+                                            Text="{Binding}"
+                                            TextWrapping="Wrap" />
+                                    </ui:Card>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </ui:Card>
+
+
+        </Grid>
+    </Grid>
+</UserControl>
