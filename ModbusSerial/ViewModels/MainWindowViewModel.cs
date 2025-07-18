@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using ModbusSerial.Views;
 using Wpf.Ui.Controls;
-using WPFSerialDebug.Views;
 
-namespace WPFSerialDebug.ViewModels;
+namespace ModbusSerial.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
@@ -14,12 +14,6 @@ public partial class MainWindowViewModel : ObservableObject
 	{
 		NavigationItems =
 		[
-			//new NavigationViewItem()
-			//{
-			//	Content = "´®¿Ú¼ì²â",
-			//	Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
-			//	TargetPageType = typeof(DashboardView)
-			//},
 			new NavigationViewItem()
 			{
 				Content = "Modbus Serial Dashboard",

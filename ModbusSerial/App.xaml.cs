@@ -2,13 +2,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Windows;
+using ModbusSerial.Model;
+using ModbusSerial.ViewModels;
+using ModbusSerial.Views;
 using Wpf.Ui;
 using Wpf.Ui.DependencyInjection;
-using WPFSerialDebug.Model;
-using WPFSerialDebug.ViewModels;
-using WPFSerialDebug.Views;
 
-namespace WPFSerialDebug
+namespace ModbusSerial
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -30,12 +30,8 @@ namespace WPFSerialDebug
             services.TryAddKeyedTransient<ModbusClient, ModbusRtuClient>(ModbusConnectionType.RTU);
 
             services.AddSingleton<MainWindowViewModel>();
-            services.AddTransient<DashboardViewModel>();
-            services.AddTransient<SettingsViewModel>();
             services.AddTransient<ModbusDashboardViewModel>();
 
-			services.AddTransient<DashboardView>();
-            services.AddTransient<SettingsView>();
             services.AddTransient<ModbusDashboardView>();
 
 

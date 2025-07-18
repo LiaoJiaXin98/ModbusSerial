@@ -4,10 +4,10 @@ using FluentModbus;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Text;
-using WPFSerialDebug.Model;
-using WPFSerialDebug.Unit;
+using ModbusSerial.Model;
+using ModbusSerial.Unit;
 
-namespace WPFSerialDebug.ViewModels
+namespace ModbusSerial.ViewModels
 {
 	public partial class ModbusDashboardViewModel : ObservableObject, IDisposable
 	{

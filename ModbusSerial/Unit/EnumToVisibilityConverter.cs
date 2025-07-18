@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace WPFSerialDebug.Unit;
+namespace ModbusSerial.Unit;
 
 public class EnumToVisibilityConverter : IValueConverter
 {

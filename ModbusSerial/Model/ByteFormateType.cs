@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WPFSerialDebug.Model
+namespace ModbusSerial.Model
 {
-    public enum ModbusConnectionType
-    {
-        TCP = 1,
-        RTU = 2,
+	public enum ByteFormateType
+	{
+		HEX ,
+		BINARY,
+		String
 	}
 }

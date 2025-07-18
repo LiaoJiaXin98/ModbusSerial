@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using WPFSerialDebug.ViewModels;
+using ModbusSerial.ViewModels;
 
-namespace WPFSerialDebug.Views
+namespace ModbusSerial.Views
 {
     /// <summary>
     /// ModbusDashboardViewModel.xaml 的交互逻辑

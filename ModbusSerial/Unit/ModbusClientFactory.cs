@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using WPFSerialDebug.Model;
+using ModbusSerial.Model;
 
-namespace WPFSerialDebug.Unit
+namespace ModbusSerial.Unit
 {
 	public class ModbusClientFactory
 	{

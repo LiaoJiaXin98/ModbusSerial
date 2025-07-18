@@ -18,8 +18,4 @@
     <PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>

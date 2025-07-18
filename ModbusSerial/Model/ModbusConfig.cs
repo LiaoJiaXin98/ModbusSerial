@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace WPFSerialDebug.Model
+namespace ModbusSerial.Model
 {
 
 	public interface IModbusConfig

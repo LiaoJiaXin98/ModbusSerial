@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace WPFSerialDebug.Unit;
+namespace ModbusSerial.Unit;
 
 public class StreamConverter
 {

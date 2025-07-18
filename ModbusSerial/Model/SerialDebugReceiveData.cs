@@ -1,7 +1,7 @@
 using System.Text;
-using WPFSerialDebug.Unit;
+using ModbusSerial.Unit;
 
-namespace WPFSerialDebug.Model;
+namespace ModbusSerial.Model;
 
 public class SerialDebugReceiveData 
 {

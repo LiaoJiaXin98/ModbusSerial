@@ -1,11 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui;
 using Wpf.Ui.Abstractions;
-using WPFSerialDebug.ViewModels;
-using WPFSerialDebug.Views;
 using System.Windows.Input;
+using ModbusSerial.ViewModels;
+using ModbusSerial.Views;
 
-namespace WPFSerialDebug
+namespace ModbusSerial
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

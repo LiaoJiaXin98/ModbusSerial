@@ -1,4 +1,4 @@
-namespace WPFSerialDebug.Model;
+namespace ModbusSerial.Model;
 
 public class SerialStreamContent(SerialStreamType type, string content, int dataLen)
 {

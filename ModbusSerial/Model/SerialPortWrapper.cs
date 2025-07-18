@@ -1,7 +1,7 @@
 using System.IO.Ports;
-using WPFSerialDebug.Model;
+using ModbusSerial.Model;
 
-namespace WPFSerialDebug.Model
+namespace ModbusSerial.Model
 {
     public class SerialPortWrapper : IDisposable
     {
