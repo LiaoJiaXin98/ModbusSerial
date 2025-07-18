@@ -3,3 +3,7 @@
 /WPFSerialDebug/bin
 /WPFSerialDebug/obj
 WPFSerialDebug.sln.DotSettings.user
+/ModbusSerial/bin
+/ModbusSerial/obj
+/ModbusSerial/Properties/PublishProfiles
+ModbusSerial/ModbusSerial.csproj.user
