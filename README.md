@@ -10,6 +10,9 @@ ModbusSerial is an open-source Modbus protocol debugging tool based on WPF, supp
 - MVVM architecture, easy to extend and maintain
 - Modern WPF UI interface
 
+
+![图片](assets/main.png )
+
 ## Installation & Running
 1. Clone this repository:
    ```bash

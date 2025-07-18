@@ -10,6 +10,8 @@ ModbusSerial 是一个基于 WPF 的开源 Modbus 协议调试工具，支持串
 - 采用 MVVM 架构，易于扩展和维护
 - 现代化 WPF UI 界面
 
+![图片](assets/main.png )
+
 ## 安装与运行
 1. 克隆本仓库：
    ```bash
